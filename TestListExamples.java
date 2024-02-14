@@ -18,4 +18,20 @@ public class TestListExamples {
     List<String> expected = Arrays.asList("a", "a", "b", "c", "d");
     assertEquals(expected, merged);
   }
+
+  @Test
+  public void testFilter() {
+    List<String> list = Arrays.asList("a", "b", "c", "d", "e");
+    StringChecker sc = s -> s.compareTo("c") > 0;
+    List<String> result = ListExamples.filter(list, sc);
+    assertEquals(Arrays.asList("d", "e"), result);
+  }
+
+  @Test(timeout = 500)
+  public void testMerge() {
+    List<String> list1 = Arrays.asList("a", "c", "e");
+    List<String> list2 = Arrays.asList("b", "d", "f");
+    List<String> result = ListExamples.merge(list1, list2);
+    assertEquals(Arrays.asList("a", "b", "c", "d", "e", "f"), result);
+  }
 }

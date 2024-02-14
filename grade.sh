@@ -14,3 +14,36 @@ echo 'Finished cloning'
 
 # Then, add here code to compile and run, and do any post-processing of the
 # tests
+
+if [[ -f student-submission/ListExamples.java ]]
+then
+    cp student-submission/ListExamples.java grading-area/
+    cp TestListExamples.java grading-area/
+else
+    echo "Missing student-submission/ListExamples.java, did you forget the file or misname it?"
+    exit 1 #nonzero exit code to follow convention
+fi
+
+pwd
+cd grading-area
+pwd
+
+# what's the classpath argument going to be?
+# /home/list-examples-grader/grader/../lib/*.jar refers to the jars
+CPATH='.:../lib/hamcrest-core-1.3.jar:../lib/junit-4.13.2.jar'
+javac -cp $CPATH *.java
+
+if [[ $? -ne 0 ]]
+then
+  echo "The program failed to compile, see compile error above"
+  exit 1
+fi
+
+java -cp $CPATH org.junit.runner.JUnitCore TestListExamples > junit-output.txt
+
+LINE=$(sed '2q;d' junit-output.txt)
+TESTS=$(echo $LINE | tr -cd '.' | wc -m | tr -d ' ')
+ERRORS=$((${#LINE} - $TESTS))
+SUCCESSES=$(($TESTS - $ERRORS))
+
+echo "$SUCCESSES/$TESTS tests passed"
